@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FPC Overall Loss Coefficient (Glass Covers)</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+--bg:#f4f6fb;--card:#fff;--text:#1c2333;--muted:#5b6478;--line:#d9deea;--a:#d9480f;--b:#1c7ed6;--c:#2b8a3e;--res:#fff4e6;--warn:#e03131}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12151d;--card:#1b2030;--text:#e8ebf4;--muted:#9aa3b8;--line:#2c3347;--a:#ff922b;--b:#74c0fc;--c:#69db7c;--res:#2a2218;--warn:#ff8787}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#12151d;--card:#1b2030;--text:#e8ebf4;--muted:#9aa3b8;--line:#2c3347;--a:#ff922b;--b:#74c0fc;--c:#69db7c;--res:#2a2218;--warn:#ff8787}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+.wrap{max-width:920px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.4rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 16px;font-size:.93rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.card h2{font-size:1.02rem;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:3px}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font-size:1rem}
+input[type=checkbox]{width:auto}
+input:focus,select:focus{outline:2px solid var(--b)}
+.u{font-size:.74rem;color:var(--muted)}
+.note{font-size:.8rem;color:var(--muted);margin-top:10px}
+.tag{color:var(--warn);font-size:.74rem}
+.btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+button{padding:9px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:.95rem;cursor:pointer}
+button.p{background:var(--a);border-color:var(--a);color:#fff;font-weight:600}
+.res{background:var(--res);border:2px solid var(--a);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px}
+.big{font-size:2rem;font-weight:700;color:var(--a)}
+.parts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.parts div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.9rem}
+.parts b{display:block;font-size:1.1rem}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+.eq{font-family:"Cambria Math",Cambria,Georgia,serif;font-size:.98rem;margin:3px 0;overflow-x:auto;white-space:nowrap}
+.err{color:var(--warn);font-size:.9rem;margin-top:8px}
+.code-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.code-head h2{margin:0}
+pre.src{margin:12px 0 0;max-height:480px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.78rem;line-height:1.45;white-space:pre;tab-size:2;color:var(--text)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:22px}
+footer strong{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div style="text-align:left;font-weight:700;font-size:.95rem;margin:0 0 10px">Komal Singh (2026pcv5516)</div>
+<h1>Flat-Plate Collector: Overall Loss Coefficient</h1>
+<p class="sub">U<sub>L</sub> = U<sub>t</sub> + U<sub>b</sub> + U<sub>s</sub>, with U<sub>t</sub> found by iterating the cover temperatures (1, 2 or 3 glass covers). Edit any value and the answer updates.</p>
+
+<div class="card"><h2>Inputs</h2>
+<div class="grid">
+<div><label>Number of glass covers</label><select id="n"><option>1</option><option selected="">2</option><option>3</option></select></div>
+<div><label>Absorber plate length, L₁</label><input id="l1" type="number" step="any" value="1.90"><span class="u">m</span></div>
+<div><label>Absorber plate width, L₂</label><input id="l2" type="number" step="any" value="0.90"><span class="u">m</span></div>
+<div><label>Spacing plate to first cover</label><input id="g1" type="number" step="any" value="5"><span class="u">cm</span></div>
+<div id="g2w"><label>Spacing between covers</label><input id="g2" type="number" step="any" value="5"><span class="u">cm</span></div>
+<div><label>Plate emissivity, ε<sub>p</sub></label><input id="ep" type="number" step="any" value="0.90"></div>
+<div><label>Glass cover emissivity, ε<sub>g</sub></label><input id="eg" type="number" step="any" value="0.85"></div>
+<div><label>Collector tilt, β</label><input id="beta" type="number" step="any" value="23"><span class="u">degrees</span></div>
+<div><label>Mean plate temperature, T<sub>p</sub></label><input id="tp" type="number" step="any" value="73"><span class="u">°C</span></div>
+<div><label>Ambient air temperature, T<sub>a</sub></label><input id="ta" type="number" step="any" value="25"><span class="u">°C</span></div>
+<div><label>Wind speed, V</label><input id="v" type="number" step="any" value="2.7"><span class="u">m/s</span></div>
+<div><label>Sky temperature drop (T<sub>sky</sub> = T<sub>a</sub> − x)</label><input id="dsky" type="number" step="any" value="6"><span class="u">K</span></div>
+<div><label>Back insulation thickness, δ<sub>b</sub></label><input id="db" type="number" step="any" value="10"><span class="u">cm</span></div>
+<div><label>Side (edge) insulation thickness, δ<sub>s</sub></label><input id="ds" type="number" step="any" value="5"><span class="u">cm</span></div>
+<div><label>Insulation conductivity, k<sub>i</sub></label><input id="ki" type="number" step="any" value="0.07"><span class="u">W/m·K</span></div>
+<div><label>Collector thickness (edge height), h <span class="tag">not given: assumed</span></label><input id="h" type="number" step="any" value="10"><span class="u">cm</span></div>
+</div>
+<div style="margin-top:14px"><label style="display:inline"><input type="checkbox" id="man"> Use my own air properties (from Table-2) instead of the built-in correlations</label></div>
+<div class="grid" id="manbox" style="margin-top:10px;display:none">
+<div><label>Thermal conductivity, k</label><input id="mk" type="number" step="any" value="0.0287"><span class="u">W/m·K</span></div>
+<div><label>Kinematic viscosity, ν</label><input id="mnu" type="number" step="any" value="0.0000200"><span class="u">m²/s</span></div>
+<div><label>Thermal diffusivity, α</label><input id="mal" type="number" step="any" value="0.0000284"><span class="u">m²/s</span></div>
+</div>
+<div class="btns"><button class="p" id="calc">Calculate</button><button id="reset">Reset to Ex. 1</button></div>
+<div class="err" id="err"></div>
+<div class="note">By default, air properties (k, ν, α) are evaluated at the mean temperature of each air gap. The problem doesn’t give the collector thickness h used for the edge loss, so edit it to match your data.</div>
+</div>
+
+<div class="res"><div>Overall loss coefficient, U<sub>L</sub></div>
+<div class="big"><span id="ul">0</span> W/m²·K</div>
+<div class="parts"><div>U<sub>t</sub> (top)<b id="ut">0</b></div><div>U<sub>b</sub> (back)<b id="ub">0</b></div><div>U<sub>s</sub> (edge)<b id="us">0</b></div></div>
+<div class="note" id="status"></div></div>
+
+<div class="card"><h2>Working</h2>
+<div class="eq">U<sub>b</sub> = k<sub>i</sub> / δ<sub>b</sub> = <span id="w1"></span></div>
+<div class="eq">U<sub>s</sub> = (L₁ + L₂)·h·k<sub>i</sub> / (L₁·L₂·δ<sub>s</sub>) = <span id="w2"></span></div>
+<div class="eq">h<sub>w</sub> = 5.7 + 3.8·V = <span id="w3"></span> &nbsp;|&nbsp; T<sub>sky</sub> = <span id="w4"></span></div>
+<div class="eq">U<sub>t</sub> = q / (T<sub>p</sub> − T<sub>a</sub>) = <span id="w5"></span></div>
+<div class="eq">U<sub>L</sub> = U<sub>t</sub> + U<sub>b</sub> + U<sub>s</sub> = <span id="w6"></span></div>
+</div>
+
+<div class="card"><h2>Layer temperatures</h2><div class="tw" id="tt"></div></div>
+<div class="card"><h2>Air-gap calculations (final iteration)</h2><div class="tw" id="gt"></div>
+<div class="note">Nu from Table-1: 1 + 1.446[1 − 1708/(Ra cosβ)] for 1708 &lt; Ra cosβ &lt; 5900; 0.229(Ra cosβ)^0.252 for 5900 &lt; Ra cosβ &lt; 9.23×10⁴; 0.157(Ra cosβ)^0.285 for 9.23×10⁴ &lt; Ra cosβ &lt; 10⁶. Below 1708 there is no convection and Nu = 1.</div></div>
+
+<div class="card" id="codecard"><div class="code-head"><h2>Source code of this tool</h2><div class="btns" style="margin:0"><button id="codeToggle" type="button">Show code</button><button id="codeCopy" type="button">Copy code</button></div></div>
+<div class="note" style="margin-top:6px">This is the complete HTML file (markup, styles and JavaScript). Copy it into a file named <b>fpc_loss.html</b> and open it in any browser; it works offline.</div>
+<pre class="src" id="codeBox" style="display:none"></pre></div>
+
+<footer>Prepared by <strong>Komal Singh (2026pcv5516)</strong></footer>
+</div>
+<script>
+(function(){
+var SRC="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+var SG=5.670374e-8,G=9.81;
+var ids=["n","l1","l2","g1","g2","ep","eg","beta","tp","ta","v","dsky","db","ds","ki","h","mk","mnu","mal"];
+var def={};
+function $(i){return document.getElementById(i);}
+ids.forEach(function(i){def[i]=$(i).value;});
+function F(x,d){return Number(x).toFixed(d);}
+function E(x){return Number(x).toExponential(2);}
+function air(T){var k=0.0241+7.6e-5*(T-273.15),mu=1.458e-6*Math.pow(T,1.5)/(T+110.4),rho=101325/(287*T),cp=1030.5-0.19975*T+3.9734e-4*T*T;return{k:k,nu:mu/rho,al:k/(rho*cp)};}
+function nus(x){
+ if(x<1708)return{nu:1,t:"Nu = 1 (Ra cosβ < 1708)"};
+ if(x<5900)return{nu:1+1.446*(1-1708/x),t:"1708 < Ra cosβ < 5900"};
+ if(x<9.23e4)return{nu:0.229*Math.pow(x,0.252),t:"5900 < Ra cosβ < 9.23×10⁴"};
+ if(x<1e6)return{nu:0.157*Math.pow(x,0.285),t:"9.23×10⁴ < Ra cosβ < 10⁶"};
+ return{nu:0.157*Math.pow(x,0.285),t:"Ra cosβ > 10⁶ (outside Table-1 range)"};}
+function calc(){
+ var p={},ok=true;
+ ids.forEach(function(i){p[i]=parseFloat($(i).value);});
+ var chk=["l1","l2","g1","ep","eg","db","ds","ki","h"];
+ if(p.n>1)chk.push("g2");
+ if($("man").checked)chk.push("mk","mnu","mal");
+ chk.forEach(function(i){if(!(p[i]>0))ok=false;});
+ ["beta","tp","ta","v","dsky"].forEach(function(i){if(isNaN(p[i]))ok=false;});
+ if(p.beta<0||p.beta>=90||p.ep>1||p.eg>1)ok=false;
+ if(p.tp<=p.ta)ok=false;
+ $("err").textContent=ok?"":"Please check the inputs: positive values required, emissivity ≤ 1, tilt between 0° and 90°, and plate temperature above ambient.";
+ if(!ok)return;
+ var N=p.n,Tp=p.tp+273.15,Ta=p.ta+273.15,Tsky=Ta-p.dsky,cb=Math.cos(p.beta*Math.PI/180),hw=5.7+3.8*p.v;
+ var T=[],i,it,q=0,gaps=[],conv=false;
+ for(i=0;i<=N;i++)T.push(Tp-(Tp-Ta)*i/(N+1));
+ for(it=1;it<=1000;it++){
+  gaps=[];var R=0,hs=[];
+  for(i=0;i<N;i++){
+   var L=(i===0?p.g1:p.g2)/100,dT=Math.max(Math.abs(T[i]-T[i+1]),1e-3),Tm=(T[i]+T[i+1])/2;
+   var pr=$("man").checked?{k:p.mk,nu:p.mnu,al:p.mal}:air(Tm);
+   var Ra=G*(1/Tm)*dT*Math.pow(L,3)/(pr.nu*pr.al),x=Ra*cb,nn=nus(x),hc=nn.nu*pr.k/L;
+   var ea=i===0?p.ep:p.eg,hr=SG*(T[i]*T[i]+T[i+1]*T[i+1])*(T[i]+T[i+1])/(1/ea+1/p.eg-1);
+   gaps.push({i:i,L:L,Tm:Tm,dT:dT,Ra:Ra,x:x,nu:nn.nu,t:nn.t,hc:hc,hr:hr});hs.push(hc+hr);R+=1/(hc+hr);}
+  var Tc=T[N],hrs=Math.abs(Tc-Ta)>1e-6?p.eg*SG*(Tc*Tc+Tsky*Tsky)*(Tc+Tsky)*(Tc-Tsky)/(Tc-Ta):4*p.eg*SG*Math.pow(Tc,3);
+  var hN=hw+hrs;R+=1/hN;q=(Tp-Ta)/R;
+  var nT=[Tp],md=0;
+  for(i=1;i<=N;i++){nT.push(nT[i-1]-q/hs[i-1]);}
+  for(i=0;i<=N;i++)md=Math.max(md,Math.abs(nT[i]-T[i]));
+  T=nT;
+  if(md<1e-7){conv=true;break;}
+ }
+ var Ut=q/(Tp-Ta),Ub=p.ki/(p.db/100),Us=(p.l1+p.l2)*(p.h/100)*p.ki/(p.l1*p.l2*(p.ds/100)),UL=Ut+Ub+Us;
+ $("ul").textContent=F(UL,3);$("ut").textContent=F(Ut,3);$("ub").textContent=F(Ub,3);$("us").textContent=F(Us,3);
+ $("status").textContent=(conv?"Converged in "+it+" iterations.":"Did not fully converge.")+" Heat flow q = "+F(q,1)+" W/m² of plate area.";
+ $("w1").textContent=F(p.ki,3)+" / "+F(p.db/100,3)+" = "+F(Ub,3)+" W/m²·K";
+ $("w2").textContent="("+p.l1+" + "+p.l2+") × "+F(p.h/100,3)+" × "+p.ki+" / ("+p.l1+" × "+p.l2+" × "+F(p.ds/100,3)+") = "+F(Us,3)+" W/m²·K";
+ $("w3").textContent=F(hw,2)+" W/m²·K";
+ $("w4").textContent=F(Tsky-273.15,1)+" °C";
+ $("w5").textContent=F(q,2)+" / ("+F(p.tp,1)+" − "+F(p.ta,1)+") = "+F(Ut,3)+" W/m²·K";
+ $("w6").textContent=F(Ut,3)+" + "+F(Ub,3)+" + "+F(Us,3)+" = "+F(UL,3)+" W/m²·K";
+ var h="<table><tr><th>Layer</th><th>T (°C)</th><th>T (K)</th></tr><tr><td>Absorber plate</td><td>"+F(T[0]-273.15,2)+"</td><td>"+F(T[0],2)+"</td></tr>";
+ for(i=1;i<=N;i++)h+="<tr><td>Glass cover "+i+"</td><td>"+F(T[i]-273.15,2)+"</td><td>"+F(T[i],2)+"</td></tr>";
+ h+="<tr><td>Ambient air</td><td>"+F(p.ta,2)+"</td><td>"+F(Ta,2)+"</td></tr></table>";
+ $("tt").innerHTML=h;
+ h="<table><tr><th>Gap</th><th>L (cm)</th><th>T mean (°C)</th><th>ΔT (K)</th><th>Ra</th><th>Ra cosβ</th><th>Correlation used</th><th>Nu</th><th>h<sub>c</sub></th><th>h<sub>r</sub></th></tr>";
+ gaps.forEach(function(g){h+="<tr><td>"+(g.i===0?"Plate → Cover 1":"Cover "+g.i+" → Cover "+(g.i+1))+"</td><td>"+F(g.L*100,1)+"</td><td>"+F(g.Tm-273.15,1)+"</td><td>"+F(g.dT,2)+"</td><td>"+E(g.Ra)+"</td><td>"+E(g.x)+"</td><td>"+g.t+"</td><td>"+F(g.nu,3)+"</td><td>"+F(g.hc,3)+"</td><td>"+F(g.hr,3)+"</td></tr>";});
+ h+="</table><div class=\"note\">h<sub>c</sub> and h<sub>r</sub> in W/m²·K. Outer cover to ambient: h<sub>w</sub> = "+F(hw,2)+", sky radiation coefficient included in the iteration.</div>";
+ $("gt").innerHTML=h;
+}
+function vis(){$("g2w").style.display=$("n").value==="1"?"none":"block";$("manbox").style.display=$("man").checked?"grid":"none";}
+$("calc").addEventListener("click",calc);
+$("reset").addEventListener("click",function(){ids.forEach(function(i){$(i).value=def[i];});$("man").checked=false;vis();calc();});
+ids.forEach(function(i){$(i).addEventListener("input",calc);$(i).addEventListener("change",function(){vis();calc();});});
+$("man").addEventListener("change",function(){vis();calc();});
+$("codeBox").textContent=SRC;
+$("codeToggle").addEventListener("click",function(){var b=$("codeBox"),o=b.style.display==="none";b.style.display=o?"block":"none";this.textContent=o?"Hide code":"Show code";});
+$("codeCopy").addEventListener("click",function(){var btn=this;function done(m){btn.textContent=m;setTimeout(function(){btn.textContent="Copy code";},1800);}
+ try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SRC).then(function(){done("Copied");},function(){fb();});}else{fb();}}catch(e){fb();}
+ function fb(){var b=$("codeBox"),wasHidden=b.style.display==="none";b.style.display="block";var r=document.createRange();r.selectNodeContents(b);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);var ok=false;try{ok=document.execCommand("copy");}catch(e){}done(ok?"Copied":"Press Ctrl+C");if(wasHidden){$("codeToggle").textContent="Hide code";}}
+});
+vis();calc();
+})();
+</script></body></html>
